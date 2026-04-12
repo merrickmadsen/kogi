@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('kogi_profiles', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('dietary_restrictions')->nullable();
+            $table->string('food_allergies')->nullable();
+            $table->string('skill_level')->nullable();
+            $table->text('pantry_staples')->nullable();
+            $table->text('kitchen_equipment')->nullable();
             $table->timestamps();
         });
     }
