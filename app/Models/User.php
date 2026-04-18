@@ -48,4 +48,9 @@ class User extends Authenticatable
         return $this->hasOne(KogiProfile::class);
     }
 
+    public function recipes()
+    {
+        return $this->hasMany(Recipe::class);
+    }
+
 }
