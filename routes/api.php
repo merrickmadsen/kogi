@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KogiProfileController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\ChatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,4 +32,5 @@ Route::post('/login', function (Request $request) {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [KogiProfileController::class, 'show']);
     Route::put('/profile', [KogiProfileController::class, 'update']);
+    Route::post('/chat', [ChatController::class, 'ask']);
 });
