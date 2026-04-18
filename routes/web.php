@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KogiProfileController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\RecipeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,10 @@ Route::middleware('auth')->group(function () {
         return view('chat');
     })->name('chat');
     Route::post('/chat', [ChatController::class, 'ask'])->name('chat.ask');
+    Route::get('/recipes', function () {
+        return view('recipes');
+    })->name('recipes');
+    Route::get('/my-recipes', [RecipeController::class, 'index'])->name('recipes.data');
 });
 
 require __DIR__.'/auth.php';

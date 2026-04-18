@@ -18,6 +18,9 @@
                     <x-nav-link :href="route('chat')" :active="request()->routeIs('chat')">
                         {{ __('Ask Kogi') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('recipes')" :active="request()->routeIs('recipes')">
+                        {{ __('Recipes') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -75,6 +78,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('chat')" :active="request()->routeIs('chat')">
                 {{ __('Ask Kogi') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('recipes')" :active="request()->routeIs('recipes')">
+                {{ __('Recipes') }}
             </x-responsive-nav-link>
         </div>
 
