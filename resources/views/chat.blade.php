@@ -32,7 +32,7 @@
             </div>
         </div>
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
         const messagesDiv = document.getElementById('chat-messages');
         const input = document.getElementById('chat-input');
@@ -43,7 +43,7 @@
             div.className = isUser 
                 ? 'text-right' 
                 : 'text-left';
-            div.innerHTML = `<span class="inline-block px-4 py-2 rounded-lg ${isUser ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-800'} max-w-prose text-sm whitespace-pre-wrap">${text}</span>`;
+                div.innerHTML = `<span class="inline-block px-4 py-2 rounded-lg ${isUser ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-800'} max-w-prose text-sm prose">${isUser ? text : marked.parse(text)}</span>`;
             messagesDiv.appendChild(div);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
