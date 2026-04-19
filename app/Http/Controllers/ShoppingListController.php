@@ -44,4 +44,21 @@ class ShoppingListController extends Controller
         $item->delete();
         return response()->json(['success' => true]);
     }
+
+    public function addFromRecipe(Request $request, ShoppingList $list)
+    {
+        $items = $request->input('items', []);
+        
+        foreach ($items as $item) {
+            $list->items()->create([
+                'name' => $item['name'],
+                'quantity' => $item['quantity'] ?? null,
+                'unit' => $item['unit'] ?? null,
+                'store_section' => $item['store_section'] ?? null,
+                'checked' => false,
+            ]);
+        }
+
+        return response()->json(['success' => true]);
+    }
 }

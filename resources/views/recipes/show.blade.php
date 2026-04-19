@@ -12,6 +12,12 @@
                 <!-- Meta Info -->
                 <div id="recipe-meta" class="flex gap-6 text-sm text-gray-500 mb-8"></div>
 
+                <div class="mt-4 mb-8">
+                    <button onclick="document.getElementById('shopping-modal').classList.remove('hidden')" class="px-4 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700">
+                        + Add to Shopping List
+                    </button>
+                </div>
+
                 <!-- Ingredients -->
                 <div class="mb-8">
                     <h3 class="font-semibold text-lg text-gray-800 mb-4">Ingredients</h3>
@@ -30,6 +36,24 @@
                     <p id="recipe-notes" class="text-gray-600 text-sm"></p>
                 </div>
 
+            </div>
+        </div>
+    </div>
+
+    <!-- Shopping List Modal -->
+    <div id="shopping-modal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 class="font-semibold text-lg text-gray-800 mb-4">Add to Shopping List</h3>
+            
+            <div id="modal-ingredients" class="space-y-2 mb-6 max-h-64 overflow-y-auto"></div>
+            
+            <div class="flex gap-3 justify-end">
+                <button onclick="document.getElementById('shopping-modal').classList.add('hidden')" class="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50">
+                    Cancel
+                </button>
+                <button onclick="addToShoppingList()" class="px-4 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700">
+                    Add Selected
+                </button>
             </div>
         </div>
     </div>
@@ -57,6 +81,64 @@
         if (recipe.notes) {
             document.getElementById('recipe-notes-section').classList.remove('hidden');
             document.getElementById('recipe-notes').textContent = recipe.notes;
+        }
+
+        const pantryStaples = @json($pantryStaples);
+        const pantryList = pantryStaples.toLowerCase().split(',').map(s => s.trim());
+
+        function isPantryItem(name) {
+            return pantryList.some(staple => name.toLowerCase().includes(staple));
+        }
+
+        // Populate modal when opened
+        document.querySelector('[onclick*="shopping-modal"]').addEventListener('click', () => {
+            const ingredients = recipe.ingredients;
+            const container = document.getElementById('modal-ingredients');
+            
+            container.innerHTML = ingredients.map(i => {
+                const label = `${i.amount ? i.amount + ' ' : ''}${i.unit ? i.unit + ' ' : ''}${i.name}`;
+                const isPantry = isPantryItem(i.name);
+                return `
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" value='${JSON.stringify(i)}' ${isPantry ? '' : 'checked'} class="ingredient-checkbox rounded border-gray-300" />
+                        <span class="text-sm ${isPantry ? 'text-gray-400' : 'text-gray-700'}">${label} ${isPantry ? '<span class="text-xs text-gray-400">(pantry)</span>' : ''}</span>
+                    </label>
+                `;
+            }).join('');
+        });
+
+        async function addToShoppingList() {
+            const checked = [...document.querySelectorAll('.ingredient-checkbox:checked')];
+            const items = checked.map(cb => {
+                const i = JSON.parse(cb.value);
+                return {
+                    name: i.name,
+                    quantity: i.amount,
+                    unit: i.unit,
+                    store_section: null
+                };
+            });
+
+            const listId = {{ auth()->user()->shoppingLists()->first()?->id ?? 'null' }};
+            
+            if (!listId) {
+                alert('No shopping list found. Please visit the Shopping List page first.');
+                return;
+            }
+
+            const response = await fetch(`/shopping/${listId}/add-from-recipe`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ items })
+            });
+
+            if (response.ok) {
+                document.getElementById('shopping-modal').classList.add('hidden');
+                alert('Items added to your shopping list!');
+            }
         }
     </script>
 </x-app-layout>

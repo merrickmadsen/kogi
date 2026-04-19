@@ -41,13 +41,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-recipes', [RecipeController::class, 'index'])->name('recipes.data');
     Route::get('/recipes/{id}', function ($id) {
         $recipe = \App\Models\Recipe::with(['ingredients', 'instructions'])->findOrFail($id);
-        return view('recipes.show', ['recipe' => $recipe]);
+        $pantryStaples = auth()->user()->kogiProfile?->pantry_staples ?? '';
+        return view('recipes.show', ['recipe' => $recipe, 'pantryStaples' => $pantryStaples]);
     })->name('recipes.show');
     Route::post('/create-recipe', [ChatController::class, 'createRecipe'])->name('create.recipe');
     Route::get('/shopping', [ShoppingListController::class, 'index'])->name('shopping');
     Route::post('/shopping/{list}/items', [ShoppingListController::class, 'addItem'])->name('shopping.addItem');
     Route::patch('/shopping/items/{item}/toggle', [ShoppingListController::class, 'toggleItem'])->name('shopping.toggleItem');
     Route::delete('/shopping/items/{item}', [ShoppingListController::class, 'removeItem'])->name('shopping.removeItem');
+    Route::post('/shopping/{list}/add-from-recipe', [ShoppingListController::class, 'addFromRecipe'])->name('shopping.addFromRecipe');
 });
 
 require __DIR__.'/auth.php';
