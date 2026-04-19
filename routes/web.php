@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
         $recipe = \App\Models\Recipe::with(['ingredients', 'instructions'])->findOrFail($id);
         return view('recipes.show', ['recipe' => $recipe]);
     })->name('recipes.show');
+    Route::post('/create-recipe', [ChatController::class, 'createRecipe'])->name('create.recipe');
 });
 
 require __DIR__.'/auth.php';

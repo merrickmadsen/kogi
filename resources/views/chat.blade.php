@@ -38,14 +38,57 @@
         const input = document.getElementById('chat-input');
         const button = document.getElementById('send-button');
 
-        function addMessage(text, isUser) {
+        function addMessage(text, isUser, showRecipeButton = false) {
             const div = document.createElement('div');
-            div.className = isUser 
-                ? 'text-right' 
-                : 'text-left';
-                div.innerHTML = `<span class="inline-block px-4 py-2 rounded-lg ${isUser ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-800'} max-w-prose text-sm prose">${isUser ? text : marked.parse(text)}</span>`;
+            div.className = isUser ? 'text-right' : 'text-left';
+            
+            let html = `<span class="inline-block px-4 py-2 rounded-lg ${isUser ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-800'} max-w-prose text-sm prose">${isUser ? text : marked.parse(text)}</span>`;
+            
+            if (showRecipeButton) {
+                html += `<div class="mt-2">
+                    <button onclick="createRecipe(this)" data-message="${encodeURIComponent(text)}" class="px-3 py-1 bg-green-600 text-white text-xs rounded-md hover:bg-green-700">
+                        + Create Recipe
+                    </button>
+                </div>`;
+            }
+            
+            div.innerHTML = html;
             messagesDiv.appendChild(div);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        async function createRecipe(button) {
+            const message = decodeURIComponent(button.dataset.message);
+            button.textContent = 'Creating...';
+            button.disabled = true;
+
+            try {
+                const response = await fetch('/create-recipe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ message })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    button.textContent = '✓ Recipe Saved';
+                    button.classList.remove('bg-green-600', 'hover:bg-green-700');
+                    button.classList.add('bg-gray-400');
+                    
+                    const link = document.createElement('a');
+                    link.href = `/recipes/${data.recipe_id}`;
+                    link.className = 'ml-2 text-xs text-indigo-600 hover:text-indigo-800';
+                    link.textContent = 'View Recipe →';
+                    button.parentElement.appendChild(link);
+                }
+            } catch (error) {
+                button.textContent = 'Failed - Try Again';
+                button.disabled = false;
+            }
         }
 
         button.addEventListener('click', async () => {
@@ -68,9 +111,9 @@
                 });
 
                 const data = await response.json();
-                addMessage(data.response, false);
+                addMessage(data.response, false, data.show_recipe_button);
             } catch (error) {
-                addMessage('Something went wrong. Please try again.', false);
+                addMessage(data.response, false);
             }
 
             button.disabled = false;
