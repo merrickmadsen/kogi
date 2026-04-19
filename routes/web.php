@@ -35,9 +35,13 @@ Route::middleware('auth')->group(function () {
     })->name('chat');
     Route::post('/chat', [ChatController::class, 'ask'])->name('chat.ask');
     Route::get('/recipes', function () {
-        return view('recipes');
+        return view('recipes.index');
     })->name('recipes');
     Route::get('/my-recipes', [RecipeController::class, 'index'])->name('recipes.data');
+    Route::get('/recipes/{id}', function ($id) {
+        $recipe = \App\Models\Recipe::with(['ingredients', 'instructions'])->findOrFail($id);
+        return view('recipes.show', ['recipe' => $recipe]);
+    })->name('recipes.show');
 });
 
 require __DIR__.'/auth.php';
