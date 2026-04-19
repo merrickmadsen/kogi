@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KogiProfileController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\ShoppingListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,10 @@ Route::middleware('auth')->group(function () {
         return view('recipes.show', ['recipe' => $recipe]);
     })->name('recipes.show');
     Route::post('/create-recipe', [ChatController::class, 'createRecipe'])->name('create.recipe');
+    Route::get('/shopping', [ShoppingListController::class, 'index'])->name('shopping');
+    Route::post('/shopping/{list}/items', [ShoppingListController::class, 'addItem'])->name('shopping.addItem');
+    Route::patch('/shopping/items/{item}/toggle', [ShoppingListController::class, 'toggleItem'])->name('shopping.toggleItem');
+    Route::delete('/shopping/items/{item}', [ShoppingListController::class, 'removeItem'])->name('shopping.removeItem');
 });
 
 require __DIR__.'/auth.php';
