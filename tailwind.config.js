@@ -14,6 +14,15 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                kogi: {
+                    brown: '#3D2B1F',
+                    orange: '#E8650A',
+                    cream: '#F9F5F0',
+                    tan: '#D4A574',
+                    sage: '#7C8C6E',
+                }
+            }
         },
     },
 

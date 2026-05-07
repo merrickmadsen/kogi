@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --kogi-brown: #3D2B1F;
+    --kogi-orange: #E8650A;
+    --kogi-cream: #F9F5F0;
+    --kogi-tan: #D4A574;
+    --kogi-sage: #7C8C6E;
+}
+
+body {
+    background-color: var(--kogi-cream);
+}
