@@ -123,5 +123,13 @@
         input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') button.click();
         });
+
+        // Auto-send message from dashboard
+        const urlParams = new URLSearchParams(window.location.search);
+        const prefilledMessage = urlParams.get('q');
+        if (prefilledMessage) {
+            input.value = prefilledMessage;
+            button.click();
+        }
     </script>
 </x-app-layout>

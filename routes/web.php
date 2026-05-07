@@ -50,6 +50,22 @@ Route::middleware('auth')->group(function () {
     Route::patch('/shopping/items/{item}/toggle', [ShoppingListController::class, 'toggleItem'])->name('shopping.toggleItem');
     Route::delete('/shopping/items/{item}', [ShoppingListController::class, 'removeItem'])->name('shopping.removeItem');
     Route::post('/shopping/{list}/add-from-recipe', [ShoppingListController::class, 'addFromRecipe'])->name('shopping.addFromRecipe');
+    Route::get('/shopping-summary', function () {
+        $list = auth()->user()->shoppingLists()->with('items')->first();
+        
+        if (!$list) {
+            return response()->json(['total' => 0, 'checked' => 0, 'remaining' => 0]);
+        }
+        
+        $total = $list->items->count();
+        $checked = $list->items->where('checked', true)->count();
+        
+        return response()->json([
+            'total' => $total,
+            'checked' => $checked,
+            'remaining' => $total - $checked,
+        ]);
+    })->name('shopping.summary');
 });
 
 require __DIR__.'/auth.php';
