@@ -5,8 +5,8 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <img src="/images/Kogi logo v1.png" alt="Kogi" class="h-14 w-auto">
+                    <a href="{{ route('dashboard') }}" style="font-family: 'Rye', serif; font-size: 1.75rem; color: #5C3317; text-decoration: none; line-height: 1;">
+                        Kogi
                     </a>
                 </div>
 
